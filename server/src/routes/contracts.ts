@@ -1,6 +1,10 @@
 import express, { Request, Response, NextFunction, ErrorRequestHandler } from "express";
 import { isAuthenticated } from "../middleware/auth";
 import { handleErrors } from "../middleware/errors";
+import { IUser } from "../models/user.model";
+import ContractAnalysisSchema from "../models/contract.model";
+import { analyzeContractWithAI } from "../services/ai.services";
+import multer from "multer";
 import {
   analyzeContract,
   detectAndConfirmContractType,
@@ -8,7 +12,6 @@ import {
   getContractByID,
   deleteContract,
 } from "../controllers/contract.controller";
-import multer from "multer";
 
 const router = express.Router();
 
@@ -86,6 +89,41 @@ router.delete(
   "/contract/:id",
   isAuthenticated,
   handleErrors(deleteContract)
+);
+
+router.post(
+  "/:id/ask",
+  isAuthenticated,
+  handleErrors(async (req, res) => {
+    const { id } = req.params;
+    const { prompt } = req.body;
+    const user = req.user as IUser;
+
+    if (!prompt) {
+      return res.status(400).json({ error: "No prompt provided" });
+    }
+
+    try {
+      const contract = await ContractAnalysisSchema.findOne({
+        _id: id,
+        userId: user._id
+      });
+
+      if (!contract) {
+        return res.status(404).json({ error: "Contract not found" });
+      }
+
+      const response = await analyzeContractWithAI(
+        contract.contractText,
+        prompt
+      );
+
+      return res.json({ response: response.summary });
+    } catch (error) {
+      console.error('AI chat error:', error);
+      return res.status(500).json({ error: "Failed to process AI request" });
+    }
+  })
 );
 
 // Add error handler as middleware

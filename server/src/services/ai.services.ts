@@ -54,34 +54,34 @@ Text: ${text.substring(0, 2000)}`; // Limit text length
 
 export const analyzeContractWithAI = async (
   contractText: string,
-  contractType: string
+  prompt: string
 ) => {
   const model = genAI.getGenerativeModel({ model: "gemini-pro" });
   
-  // Always use the premium/full analysis prompt
-  const prompt = `Analyze this ${contractType} and provide a detailed analysis including:
-    1. Summary of key terms and conditions
-    2. Potential risks and red flags
-    3. Opportunities and advantages
-    4. Negotiation points and recommendations
-    Please provide specific details and examples from the contract text.`;
+  // Enhanced chat prompt
+  const chatPrompt = `You are an AI assistant specialized in analyzing legal contracts. You have access to the following contract text. Please provide a clear and specific response to the user's question.
+
+Contract Text (for reference):
+${contractText.substring(0, 5000)}
+
+User Question: ${prompt}
+
+Please provide a detailed and professional response focusing specifically on the question asked. If the question is a greeting, respond politely and ask how you can help with analyzing the contract.`;
 
   try {
-    const result = await model.generateContent(prompt + `\n\nContract: ${contractText.substring(0, 5000)}`);
+    const result = await model.generateContent(chatPrompt);
     const response = await result.response;
     const analysis = response.text();
 
-    // Parse the analysis into structured sections
-    // You can implement more sophisticated parsing here
     return {
       summary: analysis,
       risks: analysis,
       opportunities: analysis,
       negotiationPoints: analysis,
-      overallScore: 75 // You can implement a scoring algorithm
+      overallScore: 75
     };
   } catch (error) {
-    console.error('AI analysis error:', error);
+    console.error('AI chat error:', error);
     throw new Error('Failed to analyze contract');
   }
 };

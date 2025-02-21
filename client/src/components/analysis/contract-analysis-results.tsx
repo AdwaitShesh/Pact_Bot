@@ -18,6 +18,7 @@ import { Button } from "../ui/button";
 import { Accordion, AccordionItem, AccordionTrigger } from "../ui/accordion";
 import { AccordionContent } from "@radix-ui/react-accordion";
 import { MessageSquare } from "lucide-react";
+import { AIChatDialog } from "../ai-chat-dialog";
 
 interface IContractAnalysisResultsProps {
   analysisResults: ContractAnalysis;
@@ -29,6 +30,7 @@ export default function ContractAnalysisResults({
   contractId,
 }: IContractAnalysisResultsProps) {
   const [activeTab, setActiveTab] = useState("summary");
+  const [isAIChatOpen, setIsAIChatOpen] = useState(false);
 
   if (!analysisResults) {
     return <div>No results</div>;
@@ -121,9 +123,7 @@ export default function ContractAnalysisResults({
   };
 
   const handleAskAI = () => {
-    // Implement AI chat functionality directly without subscription check
-    // You can add your AI chat logic here
-    console.log("Opening AI chat...");
+    setIsAIChatOpen(true);
   };
 
   return (
@@ -137,6 +137,12 @@ export default function ContractAnalysisResults({
           </Button>
         </div>
       </div>
+
+      <AIChatDialog
+        isOpen={isAIChatOpen}
+        onClose={() => setIsAIChatOpen(false)}
+        contractId={contractId}
+      />
 
       <Card className="mb-6">
         <CardHeader>
