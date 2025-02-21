@@ -1,7 +1,6 @@
 "use client";
 
 import { HeroSection } from "@/components/hero-section";
-import { PricingSection } from "@/components/pricing-section";
 import { Button } from "@/components/ui/button";
 import { api } from "@/lib/api";
 import stripePromise from "@/lib/stripe";
@@ -20,9 +19,8 @@ export default function Home() {
   };
 
   return (
-    <>
+    <main>
       <HeroSection />
-      <PricingSection />
-    </>
+    </main>
   );
 }

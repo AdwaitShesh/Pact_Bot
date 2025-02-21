@@ -65,15 +65,15 @@ export function AIChatDialog({ isOpen, onClose, contractId }: AIChatDialogProps)
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[600px] h-[80vh] flex flex-col">
+      <DialogContent className="sm:max-w-[600px] h-[80vh] flex flex-col bg-card text-card-foreground">
         <DialogHeader>
           <DialogTitle>Ask AI about this contract</DialogTitle>
         </DialogHeader>
         
         {/* Chat messages container */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-4 mb-4 bg-gray-50 rounded-lg">
+        <div className="flex-1 overflow-y-auto p-4 space-y-4 mb-4 bg-muted rounded-lg">
           {messages.length === 0 && (
-            <div className="text-center text-gray-500">
+            <div className="text-center text-muted-foreground">
               👋 Hi! I'm your AI assistant. Ask me anything about this contract!
             </div>
           )}
@@ -86,8 +86,8 @@ export function AIChatDialog({ isOpen, onClose, contractId }: AIChatDialogProps)
               <div
                 className={`max-w-[80%] p-3 rounded-lg ${
                   message.type === 'user'
-                    ? 'bg-blue-500 text-white'
-                    : 'bg-white border'
+                    ? 'bg-primary text-primary-foreground'
+                    : 'bg-muted border-muted-foreground/20 border'
                 }`}
               >
                 <p className="text-sm whitespace-pre-wrap">{message.content}</p>
@@ -98,13 +98,13 @@ export function AIChatDialog({ isOpen, onClose, contractId }: AIChatDialogProps)
         </div>
 
         {/* Input area */}
-        <div className="space-y-4 mt-auto">
+        <div className="space-y-4 mt-auto bg-card">
           <Textarea
             placeholder="Ask a question about the contract..."
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
             onKeyPress={handleKeyPress}
-            className="min-h-[80px] resize-none"
+            className="min-h-[80px] resize-none bg-muted"
           />
           <div className="flex justify-end space-x-2">
             <Button variant="outline" onClick={onClose}>

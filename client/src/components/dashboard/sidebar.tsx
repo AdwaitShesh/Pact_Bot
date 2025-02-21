@@ -8,7 +8,7 @@ import { ElementType } from "react";
 
 export const Sidebar = () => {
   return (
-    <aside className="bg-white text-black border-r border-gray-200 w-[280px] min-h-screen hidden lg:block">
+    <aside className="bg-background text-foreground border-r border-border w-[280px] min-h-screen hidden lg:block">
       {SidebarContent()}
     </aside>
   );
@@ -33,15 +33,10 @@ const SidebarContent = () => {
       label: "Results",
       href: "/dashboard/results",
     },
-    {
-      icon: Settings,
-      label: "Settings",
-      href: "/dashboard/settings",
-    },
   ];
 
   return (
-    <div className="bg-white text-black h-full flex flex-col">
+    <div className="bg-background text-foreground h-full flex flex-col">
       <nav className="flex-grow p-6">
         <ul role="list" className="flex flex-col flex-grow">
           <li>
@@ -75,8 +70,10 @@ const Navlink = ({
         href={link.href}
         target={link.target}
         className={cn(
-          "group flex h-9 items-center gap-x-3 rounded-md px-3 text-sm font-semibold leading-5 text-black",
-          path === link.href ? "bg-gray-200" : "hover:bg-gray-200"
+          "group flex h-9 items-center gap-x-3 rounded-md px-3 text-sm font-semibold leading-5 text-foreground",
+          path === link.href 
+            ? "bg-primary/20 text-primary" 
+            : "hover:bg-primary/10 hover:text-primary"
         )}
       >
         <link.icon className="size-4 shrink-0" />
@@ -92,9 +89,9 @@ interface DashboardLayoutProps {
 
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
   return (
-    <div className="flex h-screen bg-gray-100">
+    <div className="flex h-screen bg-background">
       <Sidebar />
-      <div className="flex-1 flex flex-col overflow-hidden">{children}</div>
+      <div className="flex-1 flex flex-col overflow-hidden bg-background">{children}</div>
     </div>
   );
 }

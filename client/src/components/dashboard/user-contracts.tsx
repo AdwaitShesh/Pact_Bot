@@ -111,29 +111,32 @@ export default function UserContracts() {
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
 
   const contractTypeColors: { [key: string]: string } = {
-    Employment: "bg-blue-100 text-blue-800 hover:bg-blue-200",
-    "Non-Disclosure Agreement":
-      "bg-green-100 text-green-800 hover:bg-green-200",
-    Sales: "bg-yellow-100 text-yellow-800 hover:bg-yellow-200",
-    Lease: "bg-emerald-100 text-emerald-800 hover:bg-emerald-200",
-    Services: "bg-pink-100 text-pink-800 hover:bg-pink-200",
-    Other: "bg-gray-100 text-gray-800 hover:bg-gray-200",
+    Employment: "bg-blue-900/20 text-blue-400",
+    "Non-Disclosure Agreement": "bg-green-900/20 text-green-400",
+    Sales: "bg-yellow-900/20 text-yellow-400",
+    Lease: "bg-emerald-900/20 text-emerald-400",
+    Services: "bg-pink-900/20 text-pink-400",
+    Other: "bg-gray-900/20 text-gray-400",
   };
 
   const columns: ColumnDef<ContractAnalysis>[] = [
     {
       accessorKey: "_id",
       header: ({ column }) => {
-        return <Button variant={"ghost"}>Contract ID</Button>;
+        return (
+          <div className="text-muted-foreground">Contract ID</div>
+        );
       },
       cell: ({ row }) => (
-        <div className="font-medium">{row.getValue<string>("_id")}</div>
+        <div className="text-foreground">{row.getValue<string>("_id")}</div>
       ),
     },
     {
       accessorKey: "overallScore",
       header: ({ column }) => {
-        return <Button variant={"ghost"}>Overall Score</Button>;
+        return (
+          <div className="text-muted-foreground">Overall Score</div>
+        );
       },
       cell: ({ row }) => {
         const score = parseFloat(row.getValue("overallScore"));
@@ -228,10 +231,17 @@ export default function UserContracts() {
   });
 
   return (
-    <div className="container mx-auto p-6 space-y-8">
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold">Your Contracts</h1>
-        <Button onClick={() => setIsUploadModalOpen(true)}>New Contract</Button>
+    <div className="p-8 bg-background">
+      <div className="flex items-center justify-between mb-8">
+        <div className="space-y-1">
+          <h2 className="text-2xl font-semibold tracking-tight text-foreground">Your Contracts</h2>
+          <p className="text-sm text-muted-foreground">
+            Manage and analyze your contracts
+          </p>
+        </div>
+        <Button onClick={() => setIsUploadModalOpen(true)} className="bg-primary text-primary-foreground">
+          Upload Contract
+        </Button>
       </div>
 
       {alert && (
@@ -240,58 +250,56 @@ export default function UserContracts() {
         </Alert>
       )}
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-4">
-        <Card>
+      <div className="grid gap-4 md:grid-cols-3 mb-8">
+        <Card className="bg-card">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
+            <CardTitle className="text-sm font-medium text-muted-foreground">
               Total Contracts
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{totalContracts}</div>
+            <div className="text-2xl font-bold text-foreground">{contracts?.length || 0}</div>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="bg-card">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
+            <CardTitle className="text-sm font-medium text-muted-foreground">
               Average Score
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{averageScore}%</div>
+            <div className="text-2xl font-bold text-foreground">{averageScore}%</div>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="bg-card">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
+            <CardTitle className="text-sm font-medium text-muted-foreground">
               High Risk Contracts
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{highRiskContracts}</div>
+            <div className="text-2xl font-bold text-foreground">{highRiskContracts}</div>
           </CardContent>
         </Card>
       </div>
 
-      <div className="rounded-md border">
+      <div className="rounded-md border border-border bg-card">
         <Table>
-          <TableHeader>
+          <TableHeader className="bg-muted/50">
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                    </TableHead>
-                  );
-                })}
+              <TableRow key={headerGroup.id} className="hover:bg-muted/50">
+                {headerGroup.headers.map((header) => (
+                  <TableHead key={header.id} className="text-muted-foreground">
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                  </TableHead>
+                ))}
               </TableRow>
             ))}
           </TableHeader>
@@ -301,13 +309,11 @@ export default function UserContracts() {
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
+                  className="hover:bg-muted/50"
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
+                    <TableCell key={cell.id} className="text-foreground">
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
                   ))}
                 </TableRow>
@@ -316,9 +322,9 @@ export default function UserContracts() {
               <TableRow>
                 <TableCell
                   colSpan={columns.length}
-                  className="h-24 text-center"
+                  className="h-24 text-center text-muted-foreground"
                 >
-                  No results.
+                  No contracts found.
                 </TableCell>
               </TableRow>
             )}

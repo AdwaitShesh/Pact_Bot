@@ -58,32 +58,7 @@ export function PricingSection() {
           buttonText="Upgrade"
           onButtonClick={handleUpgrade}
         />
-        <PricingCard
-          title="Premium"
-          description="For comprehensive contract analysis"
-          price="$100"
-          highlight
-          period="/lifetime"
-          features={[
-            "Advanced contract analysis",
-            "Unlimited projects",
-            "Chat with your contract",
-            "10+ risks with severity levels",
-            "10+ opportunities with impact levels",
-            "Comprehensive contract summary",
-            "Improvement recommendations",
-            "Key clauses identification",
-            "Legal compliance assessment",
-            "Negotiation points",
-            "Contract duration analysis",
-            "Termination conditions summary",
-            "Compensation structure breakdown",
-            "Performance metrics identification",
-            "Intellectual property clause summary",
-          ]}
-          buttonText="Upgrade"
-          onButtonClick={handleUpgrade}
-        />
+        
       </div>
     </div>
   );

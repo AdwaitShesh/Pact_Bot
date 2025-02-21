@@ -1,23 +1,18 @@
 import { api } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
 
-export const useCurrentUser = () => {
-  const {
-    isLoading,
-    isError,
-    data: user,
-  } = useQuery({
-    queryKey: ["currentUser"],
+export function useCurrentUser() {
+  const { data: user, isLoading, error } = useQuery({
+    queryKey: ["user"],
     queryFn: async () => {
-      try {
-        const response = await api.get("/auth/current-user");
-        return response.data;
-      } catch (error) {
-        console.error(error);
-        return null;
-      }
+      const response = await api.get("/auth/current-user");
+      return response.data;
     },
   });
 
-  return { isLoading, isError, user };
-};
+  return {
+    user,
+    isLoading,
+    error,
+  };
+}

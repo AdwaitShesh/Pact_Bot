@@ -9,5 +9,9 @@ interface IContractResultsProps {
 export default function ContractPage({
   params: { id },
 }: IContractResultsProps) {
-  return <ContractResults contractId={id} />;
+  return (
+    <div className="min-h-screen bg-background text-foreground">
+      <ContractResults contractId={id} />
+    </div>
+  );
 }

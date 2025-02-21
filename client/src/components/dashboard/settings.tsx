@@ -57,12 +57,12 @@ export default function Settings() {
   }
 
   return (
-    <div className="container mx-auto py-10">
-      <div className="grid gap-8 md:grid-cols-2">
-        <Card>
+    <div className="container mx-auto py-10 bg-background text-foreground">
+      <div className="grid gap-8 md:grid-cols-1">
+        <Card className="bg-card text-card-foreground">
           <CardHeader>
             <CardTitle>Personal Information</CardTitle>
-            <CardDescription>Your personal information</CardDescription>
+            <CardDescription className="text-muted-foreground">Your personal information</CardDescription>
           </CardHeader>
           <CardContent className="space-y-2">
             <div className="space-y-2">
@@ -71,16 +71,16 @@ export default function Settings() {
                 value={user.displayName}
                 id="name"
                 readOnly
-                className="bg-gray-100"
+                className="bg-muted text-foreground"
               />
             </div>
             <div className="space-y-2">
-              <Label>Full Name</Label>
+              <Label>Email</Label>
               <Input
                 value={user.email}
                 id="email"
                 readOnly
-                className="bg-gray-100"
+                className="bg-muted text-foreground"
               />
             </div>
             <p className="text-sm text-muted-foreground">
@@ -91,7 +91,7 @@ export default function Settings() {
         </Card>
 
         {isActive ? (
-          <Card>
+          <Card className="border-primary/20">
             <CardHeader>
               <CardTitle>Premium</CardTitle>
               <CardDescription>Your membership details</CardDescription>
@@ -99,9 +99,9 @@ export default function Settings() {
             <CardContent className="space-y-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <div className="flex items-center gap-1 rounded-md bg-green-600/10 p-1 pr-2 text-xs font-medium text-green-600">
-                    <div className="m-0.5 rounded-full bg-green-600/10 p-[3px]">
-                      <Check size={16} className="text-foreground" />
+                  <div className="flex items-center gap-1 rounded-md bg-primary/20 p-1 pr-2 text-xs font-medium text-primary">
+                    <div className="m-0.5 rounded-full bg-primary/20 p-[3px]">
+                      <Check size={16} className="text-primary" />
                     </div>
                     Active membership
                   </div>
