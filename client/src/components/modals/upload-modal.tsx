@@ -17,6 +17,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "../ui/button";
 import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
 import { useRouter } from "next/navigation";
+import { toast } from "@/components/ui/use-toast";
 
 interface IUploadModalProps {
   isOpen: boolean;
@@ -80,24 +81,36 @@ export function UploadModal({
       formData.append("contract", file);
       formData.append("contractType", contractType);
 
-      const response = await api.post(`/contracts/analyze`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-
-      console.log(response.data);
-      return response.data;
+      try {
+        console.log('Uploading file:', file.name, 'Type:', contractType);
+        const response = await api.post('/contracts/analyze', formData);
+        
+        if (!response.data) {
+          throw new Error('No response data received');
+        }
+        
+        console.log('Upload successful:', response.data);
+        return response.data;
+      } catch (error: any) {
+        console.error('Upload error details:', error.response?.data || error.message);
+        throw new Error(error.response?.data?.error || error.message || 'Failed to analyze contract');
+      }
     },
     onSuccess: (data) => {
       setAnalysisResults(data);
       setStep("done");
       onUploadComplete();
+      router.push(`/dashboard/contract/${data._id}`);
     },
-    onError: (error) => {
-      console.error(error);
-      setError("Failed to upload contract");
+    onError: (error: Error) => {
+      console.error('Upload mutation error:', error);
+      setError(error.message);
       setStep("upload");
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
     },
   });
 

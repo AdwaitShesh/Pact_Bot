@@ -54,25 +54,31 @@ Text: ${text.substring(0, 2000)}`; // Limit text length
 
 export const analyzeContractWithAI = async (
   contractText: string,
-  tier: "free" | "premium",
   contractType: string
 ) => {
   const model = genAI.getGenerativeModel({ model: "gemini-pro" });
   
-  let prompt = tier === "premium" 
-    ? `Analyze this ${contractType} and provide a detailed analysis including risks, opportunities, and recommendations.`
-    : `Analyze this ${contractType} and provide a basic analysis of key points and potential issues.`;
+  // Always use the premium/full analysis prompt
+  const prompt = `Analyze this ${contractType} and provide a detailed analysis including:
+    1. Summary of key terms and conditions
+    2. Potential risks and red flags
+    3. Opportunities and advantages
+    4. Negotiation points and recommendations
+    Please provide specific details and examples from the contract text.`;
 
   try {
     const result = await model.generateContent(prompt + `\n\nContract: ${contractText.substring(0, 5000)}`);
     const response = await result.response;
     const analysis = response.text();
 
+    // Parse the analysis into structured sections
+    // You can implement more sophisticated parsing here
     return {
       summary: analysis,
-      risks: [],
-      opportunities: [],
-      overallScore: 75 // Default score
+      risks: analysis,
+      opportunities: analysis,
+      negotiationPoints: analysis,
+      overallScore: 75 // You can implement a scoring algorithm
     };
   } catch (error) {
     console.error('AI analysis error:', error);

@@ -1,3 +1,5 @@
+"use client"
+
 import * as React from "react"
 
 import type {
@@ -23,6 +25,8 @@ const actionTypes = {
 } as const
 
 let count = 0
+let listeners: ((state: State) => void)[] = []
+let memoryState: State = { toasts: [] }
 
 function genId() {
   count = (count + 1) % Number.MAX_VALUE
@@ -49,7 +53,7 @@ type Action =
       toastId?: ToasterToast["id"]
     }
 
-interface State {
+type State = {
   toasts: ToasterToast[]
 }
 
@@ -125,10 +129,6 @@ export const reducer = (state: State, action: Action): State => {
       }
   }
 }
-
-const listeners: Array<(state: State) => void> = []
-
-let memoryState: State = { toasts: [] }
 
 function dispatch(action: Action) {
   memoryState = reducer(memoryState, action)

@@ -68,15 +68,21 @@ export const analyzeContract = async (req: Request, res: Response) => {
   const user = req.user as IUser;
   const { contractType } = req.body;
 
-  if (!req.file) {
-    return res.status(400).json({ error: "No file uploaded" });
-  }
-
-  if (!contractType) {
-    return res.status(400).json({ error: "No contract type provided" });
-  }
-
   try {
+    if (!req.file) {
+      return res.status(400).json({ error: "No file uploaded" });
+    }
+
+    if (!contractType) {
+      return res.status(400).json({ error: "No contract type provided" });
+    }
+
+    console.log('Processing file:', {
+      filename: req.file.originalname,
+      size: req.file.size,
+      mimetype: req.file.mimetype
+    });
+
     // Extract text directly from the buffer
     const pdfText = await extractTextFromPDF(req.file.buffer);
     
@@ -84,30 +90,57 @@ export const analyzeContract = async (req: Request, res: Response) => {
       return res.status(400).json({ error: "Could not extract text from PDF" });
     }
 
-    let analysis;
-    if (user.isPremium) {
-      analysis = await analyzeContractWithAI(pdfText, "premium", contractType);
-    } else {
-      analysis = await analyzeContractWithAI(pdfText, "free", contractType);
+    // Analyze the contract with AI
+    const analysis = await analyzeContractWithAI(pdfText, contractType);
+    
+    if (!analysis) {
+      throw new Error("Failed to get analysis from AI service");
     }
 
-    if (!analysis.summary || !analysis.risks || !analysis.opportunities) {
-      throw new Error("Failed to analyze contract");
-    }
-
-    const savedAnalysis = await ContractAnalysisSchema.create({
+    // Format the analysis results with proper structure
+    const formattedAnalysis = {
       userId: user._id,
       contractText: pdfText,
       contractType,
-      ...(analysis as Partial<IContractAnalysis>),
+      summary: analysis.summary || 'No summary available',
+      risks: analysis.risks ? [{
+        description: analysis.risks,
+        severity: 'medium',
+        category: 'general'
+      }] : [],
+      opportunities: analysis.opportunities ? [{
+        description: analysis.opportunities,
+        impact: 'medium',
+        category: 'general'
+      }] : [],
+      negotiationPoints: analysis.negotiationPoints ? [{
+        description: analysis.negotiationPoints,
+        priority: 'medium',
+        category: 'general'
+      }] : [],
+      overallScore: analysis.overallScore || 75,
       language: "en",
       aiModel: "gemini-pro",
+    };
+
+    // Validate the analysis before saving
+    const savedAnalysis = await ContractAnalysisSchema.create(formattedAnalysis);
+    
+    // Cache the analysis result
+    await safeRedisOperation(async () => {
+      if (redis) {
+        await redis.set(`contract:${savedAnalysis._id}`, JSON.stringify(savedAnalysis));
+      }
     });
 
-    res.json(savedAnalysis);
+    console.log('Analysis completed successfully:', savedAnalysis._id);
+    return res.status(200).json(savedAnalysis);
   } catch (error) {
     console.error('Contract analysis error:', error);
-    res.status(500).json({ error: "Failed to analyze contract" });
+    return res.status(500).json({ 
+      error: "Failed to analyze contract", 
+      details: error instanceof Error ? error.message : 'Unknown error' 
+    });
   }
 };
 

@@ -21,14 +21,13 @@ export default function ContractResults({ contractId }: IContractResultsProps) {
     if (user) {
       fetchAnalysisResults(contractId);
     }
-  }, [user]);
+  }, [user, contractId]);
 
   const fetchAnalysisResults = async (id: string) => {
     try {
       setLoading(true);
       const response = await api.get(`/contracts/contract/${id}`);
       setAnalysisResults(response.data);
-      console.log(response.data);
       setError(false);
     } catch (error) {
       console.error(error);
@@ -42,7 +41,7 @@ export default function ContractResults({ contractId }: IContractResultsProps) {
     return notFound();
   }
 
-  if (!analysisResults) {
+  if (!analysisResults || loading) {
     return <div>Loading...</div>;
   }
 
@@ -50,10 +49,6 @@ export default function ContractResults({ contractId }: IContractResultsProps) {
     <ContractAnalysisResults
       contractId={contractId}
       analysisResults={analysisResults}
-      isActive={true}
-      onUpgrade={function (): void {
-        throw new Error("Function not implemented.");
-      }}
     />
   );
 }

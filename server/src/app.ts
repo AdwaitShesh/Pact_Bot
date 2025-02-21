@@ -46,12 +46,13 @@ app.use(
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
+    exposedHeaders: ["Content-Type", "Authorization"],
   })
 );
 
 app.use(morgan("dev"));
 
-// Handle JSON and form data
+// Make sure this comes before route handlers
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -85,9 +86,9 @@ app.post(
 );
 
 // API Routes with prefix
-app.use("/auth", authRoute);
-app.use("/contracts", contractsRoute);
-app.use("/payments", paymentsRoute);
+app.use("/api/auth", authRoute);
+app.use("/api/contracts", contractsRoute);
+app.use("/api/payments", paymentsRoute);
 
 // Health check route
 app.get("/health", (req, res) => {

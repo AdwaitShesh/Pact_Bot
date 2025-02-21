@@ -1,11 +1,11 @@
 import axios from "axios";
 
 export const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080",
+  baseURL: process.env.NEXT_PUBLIC_API_URL,
+  withCredentials: true,
   headers: {
     "Content-Type": "application/json",
   },
-  withCredentials: true, // Important for session handling
 });
 
 // Add request interceptor to handle file uploads
